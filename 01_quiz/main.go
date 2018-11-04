@@ -23,13 +23,19 @@ func main() {
 
 	correctAnswers := 0
 	for i, problem := range problems {
+		fmt.Printf("Problem %d: %s = \n", i+1, problem.question)
+
+		answerChannel := make(chan string)
+		go func() {
+			var answer string
+			fmt.Scanf("%s\n", &answer)
+			answerChannel <- answer
+		}()
+
 		select {
 		case <-timer.C:
 			endQuiz(correctAnswers, len(problems))
-		default:
-			fmt.Printf("Problem %d: %s = \n", i+1, problem.question)
-			var answer string
-			fmt.Scanf("%s\n", &answer)
+		case answer := <-answerChannel:
 			if answer == problem.answer {
 				correctAnswers++
 			}
