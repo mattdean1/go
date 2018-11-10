@@ -85,8 +85,17 @@ func PeopleFactory() func(first, last string) *Person {
 // IsPalindrome checks if the string is a palindrome.
 // A palindrome is a string that reads the same backward as forward.
 func IsPalindrome(s sort.Interface) bool {
-	// TODO
-	return false
+	length := s.Len()
+	if length < 2 {
+		return true
+	}
+	for i := 0; i < length; i++ {
+		index := length - (i + 1)
+		if s.Less(i, index) != s.Less(index, i) {
+			return false
+		}
+	}
+	return true
 }
 
 // Problem 3: Functional Programming
