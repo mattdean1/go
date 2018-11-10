@@ -111,6 +111,8 @@ func IsPalindrome(s sort.Interface) bool {
 // Note the argument signature of f - func(int, int) int.
 // This means f is a function which has 2 int arguments and returns an int.
 func Fold(s []int, v int, f func(int, int) int) int {
-	// TODO
-	return 0
+	if len(s) == 0 {
+		return v
+	}
+	return Fold(s[1:], f(v, s[0]), f)
 }
