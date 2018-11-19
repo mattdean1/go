@@ -3,21 +3,15 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io"
-	"strings"
+	"os"
+	"strconv"
 )
 
 func main() {
-	// Feel free to use the main function for testing your functions
-	hello := map[string]string{
-		"ã“ã‚“ã«ã¡ã¯": "ä¸–ç•Œ",
-		"ä½ å¥½":          "ä¸–ç•Œ",
-		"ì•ˆë…•í•˜ì„¸ìš”": "ì„¸ê³„",
-	}
-	for k, v := range hello {
-		fmt.Printf("%s, %s\n", strings.Title(k), v)
-	}
+	FileSum("input.txt", "output.txt")
 }
 
 // Problem 1a: File processing
@@ -30,7 +24,35 @@ func main() {
 // You should expect your input to end with a newline, and the output should
 // have a newline after the result.
 func FileSum(input, output string) {
-	// TODO
+	inputFile := OpenFile(input)
+	defer inputFile.Close()
+	outputFile := OpenFile(output)
+	defer outputFile.Close()
+
+	sum := 0
+	scanner := bufio.NewScanner(inputFile)
+	for scanner.Scan() {
+		i, err := strconv.Atoi(scanner.Text())
+		if err != nil {
+			fmt.Println("Failed to convert string to int", err)
+			os.Exit(1)
+		}
+		sum += i
+	}
+
+	_, err := outputFile.WriteString(fmt.Sprintf("%d", sum))
+	if err != nil {
+		fmt.Println("Failed to write to output file", err)
+	}
+}
+
+func OpenFile(filename string) *os.File {
+	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0660)
+	if err != nil {
+		fmt.Println("Failed to open file", filename)
+		os.Exit(1)
+	}
+	return file
 }
 
 // Problem 1b: IO processing with interfaces
