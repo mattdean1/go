@@ -76,5 +76,5 @@ func endQuiz(score, total int) {
 
 func exit(code int, msg string) {
 	fmt.Println(msg)
-	os.Exit(1)
+	os.Exit(code)
 }
