@@ -12,6 +12,11 @@ import (
 
 func main() {
 	FileSum("input.txt", "output.txt")
+	inputFile := OpenFile("input.txt")
+	defer inputFile.Close()
+	outputFile := OpenFile("output.txt")
+	defer outputFile.Close()
+	IOSum(inputFile, outputFile)
 }
 
 // Problem 1a: File processing
@@ -68,7 +73,36 @@ func OpenFile(filename string) *os.File {
 // You should expect your input to end with a newline, and the output should
 // have a newline after the result.
 func IOSum(input io.Reader, output io.Writer) {
-	// TODO
+	buffer := make([]byte, 2)
+	sum := 0
+
+	for {
+		bytesRead, err := input.Read(buffer)
+		if bytesRead > 0 {
+			char := buffer[0]
+			i, err := strconv.Atoi(string(char))
+			if err != nil {
+				fmt.Println("Error converting input to int", err)
+				os.Exit(1)
+			}
+			sum += i
+		}
+
+		if err == io.EOF {
+			// success - write output to file
+			outputBuffer := []byte(fmt.Sprintf("%d", sum))
+			_, err := output.Write(outputBuffer)
+			if err != nil {
+				fmt.Println("Error writing file", err)
+				os.Exit(1)
+			}
+			break
+		}
+		if err != nil {
+			fmt.Println("Error reading file", err)
+			os.Exit(1)
+		}
+	}
 }
 
 // Problem 2: Concurrent map access
