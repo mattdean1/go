@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"sync"
 )
 
 func main() {
@@ -116,7 +117,7 @@ func IOSum(input io.Reader, output io.Writer) {
 // You may only add *private* fields to this struct.
 // Hint: Use an embedded sync.RWMutex, see lecture 2 for a review on embedding
 type PennDirectory struct {
-	// TODO
+	sync.RWMutex
 	directory map[int]string
 }
 
@@ -125,20 +126,31 @@ type PennDirectory struct {
 // writes to the map.
 // You may NOT write over existing data - simply raise a warning.
 func (d *PennDirectory) Add(id int, name string) {
-	// TODO
+	d.Lock()
+	defer d.Unlock()
+
+	_, exists := d.directory[id]
+	if exists {
+		d.directory[id] = name
+	} else {
+		fmt.Printf("key %d already exists, refused to write value %s \n", id, name)
+	}
 }
 
 // Get fetches a student from the Penn Directory by their PennID.
 // Get should obtain a read lock, and should allow concurrent read access but
 // not write access.
 func (d *PennDirectory) Get(id int) string {
-	// TODO
-	return ""
+	d.RLock()
+	defer d.RUnlock()
+	return d.directory[id]
 }
 
 // Remove deletes a student to the Penn Directory.
 // Remove should obtain a write lock, and should not allow any concurrent reads
 // or writes to the map.
 func (d *PennDirectory) Remove(id int) {
-	// TODO
+	d.Lock()
+	defer d.Unlock()
+	delete(d.directory, id)
 }
