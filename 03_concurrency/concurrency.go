@@ -73,7 +73,7 @@ func OpenFile(filename string) *os.File {
 // documentation.
 // You should expect your input to end with a newline, and the output should
 // have a newline after the result.
-func IOSum(input io.Reader, output io.Writer) {
+func IOSum(input io.Reader, output io.Writer) error {
 	buffer := make([]byte, 2)
 	sum := 0
 
@@ -83,8 +83,7 @@ func IOSum(input io.Reader, output io.Writer) {
 			char := buffer[0]
 			i, err := strconv.Atoi(string(char))
 			if err != nil {
-				fmt.Println("Error converting input to int", err)
-				os.Exit(1)
+				return err
 			}
 			sum += i
 		}
@@ -94,14 +93,12 @@ func IOSum(input io.Reader, output io.Writer) {
 			outputBuffer := []byte(fmt.Sprintf("%d", sum))
 			_, err := output.Write(outputBuffer)
 			if err != nil {
-				fmt.Println("Error writing file", err)
-				os.Exit(1)
+				return err
 			}
-			break
+			return nil
 		}
 		if err != nil {
-			fmt.Println("Error reading file", err)
-			os.Exit(1)
+			return err
 		}
 	}
 }

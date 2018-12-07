@@ -1,16 +1,19 @@
 package main
 
 import (
-	"testing"
-	"strings"
 	"bytes"
+	"strings"
+	"testing"
 )
 
 func TestIOSum(t *testing.T) {
 	var output bytes.Buffer
 	input := strings.NewReader("1\n2\n")
 
-	IOSum(input, &output)
+	err := IOSum(input, &output)
+	if err != nil {
+		t.Error(err)
+	}
 
 	expectedSum := "3"
 	actualSum := output.String()
