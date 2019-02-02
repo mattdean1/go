@@ -24,7 +24,7 @@ func main() {
 // Filter copies values from the input channel into an output channel that match the filter function p
 // The function p determines whether an int from the input channel c is sent on the output channel
 func Filter(input <-chan int, predicate func(int) bool) (<-chan int, error) {
-	output := make(chan int, 5)
+	output := make(chan int, cap(input))
 	for inputValue := range input {
 		output<-inputValue
 	}

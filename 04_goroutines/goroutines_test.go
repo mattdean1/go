@@ -4,25 +4,55 @@ import (
 	"testing"
 )
 
+type TestCase struct {
+	name         string
+	inputValues  []int
+	outputValues []int
+	predicate    func(int) bool
+}
+
+func GetTestCases() []TestCase {
+	return []TestCase{
+		TestCase{
+			"predicate returns true",
+			[]int{1, 2, 3},
+			[]int{1, 2, 3},
+			func(i int) bool { return true },
+		},
+		TestCase{
+			"predicate returns false",
+			[]int{1, 2, 3},
+			[]int{},
+			func(i int) bool { return false },
+		},
+	}
+}
 func TestFilter(t *testing.T) {
-	inputValues := []int{1, 1, 2, 3, 5}
-	input := make(chan int, 5)
-	var predicate func(int) bool
+	testCases := GetTestCases()
+	for _, testCase := range testCases {
+		input := make(chan int, 5)
 
-	for v := range inputValues {
-		input<-v
-	}
-	close(input)
+		for _, v := range testCase.inputValues {
+			input <- v
+		}
+		close(input)
 
-	output, err := Filter(input, predicate)
-	if err != nil {
-		t.Error(err)
-	}
+		output, err := Filter(input, testCase.predicate)
+		if err != nil {
+			t.Error(err)
+		}
 
-	for v := range inputValues {
-		outputValue := <-output
-		if outputValue != v {
-			t.Errorf("Filter failed, got %d, want %d", outputValue, v)
+		for _, expectedValue := range testCase.outputValues {
+			value := <-output
+			if value != expectedValue {
+				t.Errorf(
+					"Filter failed when testing %s, got %d, want %d",
+					testCase.name,
+					value,
+					expectedValue,
+				)
+			}
 		}
 	}
+
 }
