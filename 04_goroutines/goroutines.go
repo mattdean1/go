@@ -25,8 +25,9 @@ func main() {
 // The function p determines whether an int from the input channel c is sent on the output channel
 func Filter(input <-chan int, predicate func(int) bool) (<-chan int, error) {
 	output := make(chan int, 5)
-	output<-1
-	output<-2
+	for inputValue := range input {
+		output<-inputValue
+	}
 	close(output)
 	return output, nil
 	// errors.New("fail")

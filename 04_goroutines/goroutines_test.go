@@ -5,23 +5,24 @@ import (
 )
 
 func TestFilter(t *testing.T) {
-	input := make(chan int, 2)
+	inputValues := []int{1, 1, 2, 3, 5}
+	input := make(chan int, 5)
 	var predicate func(int) bool
 
-	input<-1
-	input<-2
+	for v := range inputValues {
+		input<-v
+	}
 	close(input)
-	output, err := Filter(input, predicate)
 
+	output, err := Filter(input, predicate)
 	if err != nil {
 		t.Error(err)
 	}
 
-	counter := 1
-	for outputValue := range output {
-		if outputValue != counter {
-			t.Errorf("Filter failed, got %d, want %d", outputValue, counter)
+	for v := range inputValues {
+		outputValue := <-output
+		if outputValue != v {
+			t.Errorf("Filter failed, got %d, want %d", outputValue, v)
 		}
-		counter++
 	}
 }
