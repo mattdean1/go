@@ -26,6 +26,8 @@ func main() {
 func Filter(input <-chan int, predicate func(int) bool) (<-chan int, error) {
 	output := make(chan int, 5)
 	output<-1
+	output<-2
+	close(output)
 	return output, nil
 	// errors.New("fail")
 }
