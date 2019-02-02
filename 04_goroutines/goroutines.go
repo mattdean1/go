@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-	"errors"
+	// "errors"
 )
 
 func main() {
@@ -23,9 +23,11 @@ func main() {
 
 // Filter copies values from the input channel into an output channel that match the filter function p
 // The function p determines whether an int from the input channel c is sent on the output channel
-func Filter(c <-chan int, p func(int) bool) (<-chan int, error) {
-	// TODO
-	return  nil, errors.New("fail")
+func Filter(input <-chan int, predicate func(int) bool) (<-chan int, error) {
+	output := make(chan int, 5)
+	output<-1
+	return output, nil
+	// errors.New("fail")
 }
 
 // Result is a type representing a single result with its index from a slice

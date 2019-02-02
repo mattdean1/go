@@ -5,12 +5,17 @@ import (
 )
 
 func TestFilter(t *testing.T) {
-	var input <-chan int
+	var input chan int
 	var predicate func(int) bool
 
-	_, err := Filter(input, predicate)
+	output, err := Filter(input, predicate)
 
 	if err != nil {
-		t.Errorf("fail")
+		t.Error(err)
+	}
+
+	firstOut := <-output
+	if firstOut != 1 {
+		t.Errorf("Filter failed, got %d, want %d", firstOut, 1)
 	}
 }
