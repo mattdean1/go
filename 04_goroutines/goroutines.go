@@ -32,12 +32,11 @@ func Filter(input <-chan int, predicate func(int) bool) (<-chan int, error) {
 	}
 	close(output)
 	return output, nil
-	// errors.New("fail")
 }
 
 // Result is a type representing a single result with its index from a slice
 type Result struct {
-	index  int
+	id     int
 	result string
 }
 
@@ -55,9 +54,24 @@ type Result struct {
 // The function must return the channel without waiting for the tasks to
 // execute, and all results should be sent on the output channel. Once all tasks
 // have been completed, close the channel.
-func ConcurrentRetry(tasks []func() (string, error), concurrent int, retry int) <-chan Result {
-	// TODO
-	return nil
+func ConcurrentRetry(tasks []func() (string, error), taskLimit int, retries int) <-chan Result {
+	output := make(chan Result, len(tasks))
+
+	go func(taskId int, task func() (string, error), output chan<- Result, retries int) {
+		for i := 0; i < retries; i++ {
+			taskResult, err := task()
+			if err == nil {
+				result := Result{
+					id: taskId,
+					result: taskResult,
+				}
+				output<-result
+				break
+			}
+		}
+	}(0, tasks[0], output, retries)
+
+	return output
 }
 
 // Task is an interface for types that process integers
