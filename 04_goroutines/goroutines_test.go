@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -55,4 +56,20 @@ func TestFilter(t *testing.T) {
 		}
 	}
 
+}
+
+
+func TestConcurrentRetry(t *testing.T) {
+	tasks := make([](func () (string, error)), 10)
+	for i := 0; i < 10; i++ {
+		i := i // assign inside loop so we can use the value
+		tasks[i] = func() (string, error) {
+			return fmt.Sprintf("task %d", i), nil
+		}
+	}
+
+	results := ConcurrentRetry(tasks, 1, 1)
+	for result := range results {
+		fmt.Printf("result %d: %s \n", result.id, result.result)
+	}
 }

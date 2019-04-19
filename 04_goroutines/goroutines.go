@@ -69,6 +69,7 @@ func ConcurrentRetry(tasks []func() (string, error), taskLimit int, retries int)
 				break
 			}
 		}
+		close(output)
 	}(0, tasks[0], output, retries)
 
 	return output
