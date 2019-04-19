@@ -4,22 +4,22 @@ import (
 	"testing"
 )
 
-type TestCase struct {
+type FilterTestCase struct {
 	name         string
 	inputValues  []int
 	outputValues []int
 	predicate    func(int) bool
 }
 
-func GetTestCases() []TestCase {
-	return []TestCase{
-		TestCase{
+func GetFilterTestCases() []FilterTestCase {
+	return []FilterTestCase{
+		FilterTestCase{
 			"predicate returns true",
 			[]int{1, 2, 3},
 			[]int{1, 2, 3},
 			func(i int) bool { return true },
 		},
-		TestCase{
+		FilterTestCase{
 			"predicate returns false",
 			[]int{1, 2, 3},
 			[]int{},
@@ -28,7 +28,7 @@ func GetTestCases() []TestCase {
 	}
 }
 func TestFilter(t *testing.T) {
-	testCases := GetTestCases()
+	testCases := GetFilterTestCases()
 	for _, testCase := range testCases {
 		input := make(chan int, 5)
 
